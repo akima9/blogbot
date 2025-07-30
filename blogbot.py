@@ -67,10 +67,14 @@ def save_post_to_file(title: str, filetitle: str, content: str, blog_path: str):
     return filepath
 
 def commit_and_push(blog_path: str, commit_msg: str):
-    subprocess.run(['git', 'add', '.'], cwd=blog_path)
-    subprocess.run(['git', 'commit', '-m', commit_msg], cwd=blog_path)
-    subprocess.run(['git', 'push'], cwd=blog_path)
-    print("[+] GitHub 블로그에 푸시 완료")
+    try:
+        subprocess.run(['git', 'add', '.'], cwd=blog_path, check=True)
+        subprocess.run(['git', 'commit', '-m', commit_msg], cwd=blog_path, check=True)
+        subprocess.run(['git', 'push'], cwd=blog_path, check=True)
+        print("[+] GitHub 블로그에 푸시 완료")
+    except subprocess.CalledProcessError as e:
+        print("[!] git 작업 중 오류 발생:", e)
+        print("[!] 변경사항이 없으면 무시해도 됩니다.")
 
 def auto_post(api_key, blog_path):
     keyword = generate_blog_idea(api_key)
@@ -85,6 +89,14 @@ def auto_post(api_key, blog_path):
 
 if __name__ == "__main__":
     OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY") # OpenRouter API 키 입력
-    BLOG_PATH = os.getcwd()  # GitHub 블로그 경로
+    BLOG_PATH = os.environ.get("BLOG_PATH", os.getcwd())  # GitHub 블로그 경로
+
+    if OPENROUTER_API_KEY is None:
+        print("[!] OPENROUTER_API_KEY 환경변수가 설정되어 있지 않습니다.")
+        sys.exit(1)
+
+    if not os.path.isdir(BLOG_PATH):
+        print(f"[!] BLOG_PATH 경로가 존재하지 않습니다: {BLOG_PATH}")
+        sys.exit(1)
 
     auto_post(OPENROUTER_API_KEY, BLOG_PATH)
