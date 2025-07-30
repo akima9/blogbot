@@ -70,7 +70,7 @@ def commit_and_push(blog_path: str, commit_msg: str):
     try:
         subprocess.run(['git', 'config', 'user.name', 'github-actions[bot]'], cwd=blog_path, check=True)
         subprocess.run(['git', 'config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com'], cwd=blog_path, check=True)
-        
+
         subprocess.run(['git', 'add', '.'], cwd=blog_path, check=True)
         subprocess.run(['git', 'commit', '-m', commit_msg], cwd=blog_path, check=True)
         subprocess.run(['git', 'push'], cwd=blog_path, check=True)
@@ -88,7 +88,7 @@ def auto_post(api_key, blog_path):
     time.sleep(3)  # 3초 대기 (API 호출 제한 방지)
     filetitle = generate_filename(title, api_key)
     filepath = save_post_to_file(title, filetitle, content, blog_path)
-    commit_and_push(blog_path, f"Auto post: {title}")
+    commit_and_push(blog_path, f"{title}")
 
 if __name__ == "__main__":
     OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY") # OpenRouter API 키 입력
