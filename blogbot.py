@@ -68,6 +68,9 @@ def save_post_to_file(title: str, filetitle: str, content: str, blog_path: str):
 
 def commit_and_push(blog_path: str, commit_msg: str):
     try:
+        subprocess.run(['git', 'config', 'user.name', 'github-actions[bot]'], cwd=blog_path, check=True)
+        subprocess.run(['git', 'config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com'], cwd=blog_path, check=True)
+        
         subprocess.run(['git', 'add', '.'], cwd=blog_path, check=True)
         subprocess.run(['git', 'commit', '-m', commit_msg], cwd=blog_path, check=True)
         subprocess.run(['git', 'push'], cwd=blog_path, check=True)
